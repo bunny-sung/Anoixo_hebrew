@@ -9,7 +9,7 @@
 
 from typing import Any, Callable, Dict, List, Union
 import numpy as np
-#import pickle #TODO: if saved the processed bible chunks, it may reduce the processing time
+#import pickle #TODO: if save the processed bible chunks, it may reduce the processing time
 
 text_dir = "../../../../STEPBible-Data/"
 text_files = ["TOTHT - Tyndale OT Hebrew Tagged text Gen-Deu - TyndaleHouse.com STEPBible.org CC BY-NC.txt", \
