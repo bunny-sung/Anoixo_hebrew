@@ -1,4 +1,6 @@
-# Anoixo_hebrew
+# Anoixo hebrew edition
+
+#### About this work
 Extension on Anoixo project that processes OT.
 
 Link to Anoixo project: https://github.com/sheesania/anoixo
