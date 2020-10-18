@@ -1,5 +1,3 @@
-
-from typing import Any, Callable, Dict, List, Union
 #from AnoixoError import AnoixoError, ProbableBugError, ServerOverwhelmedError
 #import app_constants
 #import math
@@ -8,9 +6,11 @@ from typing import Any, Callable, Dict, List, Union
 #from TextQuery import TextQuery
 #import json
 #from text_providers import Nestle1904LowfatProvider_Config as Config
-#import pandas as pd
+
+from typing import Any, Callable, Dict, List, Union
 import numpy as np
-import pickle
+#import pickle #TODO: if saved the processed bible chunks, it may reduce the processing time
+
 text_dir = "../../../../STEPBible-Data/"
 text_files = ["TOTHT - Tyndale OT Hebrew Tagged text Gen-Deu - TyndaleHouse.com STEPBible.org CC BY-NC.txt", \
 "TOTHT - Tyndale OT Hebrew Tagged text Jos-Est - TyndaleHouse.com STEPBible.org CC BY-NC.txt", \
@@ -65,7 +65,6 @@ class bible_chunks:
             self.morphology.append(morphology.split("/"))
             s_index, s_heb, s_eng =[],[],[]
             for item in strong.split("/"):
-                #print(passage_ref, "item", item) #debug
                 if len(item) >1:
                     s_index.append(item.split("=")[0])
                     s_heb.append(item.split("=")[1])
@@ -80,7 +79,7 @@ class bible_chunks:
     def print_verses(self, index):
         # print out the verse that containing matched words (based on word index)
         items = [self.pointed_word[i] for i, x in enumerate(self.verse) if x == self.verse[index] and self.chapter[i]==self.chapter[index] and self.book[i]==self.book[index]]
-        new_str = " ".join(items[:items.index(self.pointed_word[index])]) + " (" + items[items.index(self.pointed_word[index])] + ") " + " ".join(items[items.index(self.pointed_word[index]):])
+        new_str = " ".join(items[:items.index(self.pointed_word[index])]) + " (" + items[items.index(self.pointed_word[index])] + ") " + " ".join(items[items.index(self.pointed_word[index])+1:])
         print(f"{self.book[index]} {self.chapter[index]}:{self.verse[index]} \t" + new_str)
 
     def extract_words(self):
@@ -155,7 +154,6 @@ class bible_chunks:
 
             s_heb = self.strong_heb[i] if type(self.strong_heb[i])==str else ", ".join(self.strong_heb[i]) 
             s_index = self.strong_index[i] if type(self.strong_index[i])==str else ", ".join(self.strong_index[i]) 
-            #s_index = ", ".join(self.strong_index[i])
             sub_dict = {"attributes": {
             "part of speech": pos_tag,
             "lexical form": s_heb,
@@ -164,9 +162,8 @@ class bible_chunks:
             "person": person_tag, 
             "gender": gender_tag
             }}
-            print(self.pointed_word[i],self.morphology[i], sub_dict)
+            #print(self.pointed_word[i],self.morphology[i], sub_dict)
             dict_list.append(sub_dict)
-        #print("testing")
         self.cache = dict_list
 
         return dict_list
@@ -180,13 +177,6 @@ class bible_chunks:
         for i in range(max_line):
             match = True
             for j in range(len(keys)):
-                #print("keys[j]", keys[j])
-                #print("values[j]", values[j])
-                #print("self.cache",self.cache)
-                #print("self.cache[i]",self.cache[i])
-                #print("self.cache[i]['attributes']",self.cache[i]['attributes'])
-                #print("self.cache[i]['attributes'][keys[j]]",self.cache[i]['attributes'][keys[j]])
-                #print("values[j]", values[j])
                 if values[j] not in self.cache[i]['attributes'][keys[j]]:
                     match = False
             if match:
@@ -226,7 +216,6 @@ def read_text_to_query(text_files):
                 line = line.replace("\n","")
                 items = line.split("\t")
                 OT_bible_chunks.add_chunks(items[0],items[2],items[3],items[4],items[5])
-                #line = ['Ref in Heb', 'Eng ref', 'Pointed', 'Accented', 'Morphology', 'Extended Strongs\n']
             line = f.readline() 
         f.close()
     
@@ -257,10 +246,9 @@ the json file is expected to be the output
 
 def run_test():
    
-    #input_query1 ="strong number:H1961"
     input_queries =["strong number:H9004", "part of speech:noun ; state:absolute ; gender:female"]
     
-    max_lines = 5000 
+    max_lines = 2000 #maximum OT chunks its looking for, this var is set for display/debug purpose 
     OT_bible_chunks = read_text_to_query(text_files)
     
     for input_query in input_queries:
@@ -269,6 +257,5 @@ def run_test():
         match_index = OT_bible_chunks.extract_matched_queries(input_query, max_lines)
         for index in match_index:
             OT_bible_chunks.print_verses(index)
-
 
 run_test()
