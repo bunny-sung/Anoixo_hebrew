@@ -5,7 +5,7 @@ Extension on Anoixo project that processes OT.
 
 Link to Anoixo project: https://github.com/sheesania/anoixo
 
-I can't upload all the code, so the files here are only those with changes.
+I can't upload all the code (github is rejecting me to upload too many files at a time), so the files here are only those with changes.
 You will need to first clone the original Anoixo project. 
 Then copy the folder `text_provider` in this repo to `anoixo/server/anoixo-server/text_providers/`. Copy `STEPBible-Data` to the root folder `anoixo/`.
 
